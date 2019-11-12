@@ -3,9 +3,10 @@
  */
 
 import {AppRegistry} from 'react-native';
-import Main from './src/pages/Main';
 import {name as appName} from './app.json';
-// import Drawer from './src/pages/teste'
+import Navegacao from './src/index'
+
+console.disableYellowBox = true; //DESABILITA OS CONSOLE COISO
 
 // AppRegistry.registerComponent(appName, () => Drawer);
-AppRegistry.registerComponent(appName, () => Main);
+AppRegistry.registerComponent(appName, () => Navegacao);
