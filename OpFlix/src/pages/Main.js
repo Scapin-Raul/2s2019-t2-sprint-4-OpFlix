@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
-import { StyleSheet, View, Text, Image, Picker, AsyncStorage } from 'react-native';
+import { StyleSheet, View, Text, Image, Picker, AsyncStorage, TouchableOpacity } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
-
+import DatePicker from 'react-native-datepicker'
 import { Drawer, Container, Header, Content, Button } from 'native-base';
+
 
 class Main extends Component {
     closeDrawer = () => {
@@ -19,7 +20,9 @@ class Main extends Component {
             listaLancamento: [],
             listaCategorias: [],
             plataformaSelecionada: '',
-            categoriaSelecionada: ''
+            categoriaSelecionada: '',
+            dataSelecionada: '',
+            mensagemErro: '',
         };
     }
 
@@ -48,7 +51,6 @@ class Main extends Component {
             .then(response => response.json())
             .then(data => this.setState({ listaPlataformas: data }))
             .catch(error => console.warn(error));
-        // console.warn(this.state.listaPlataformas);
     }
 
     _getParsedDate = (date) => {
@@ -62,6 +64,7 @@ class Main extends Component {
             .then(response => response.json())
             .then(data => this.setState({ listaLancamento: data }))
             .catch(error => console.warn(error));
+        this.setState({ mensagemErro: '' })
     }
 
     _filtrarPlataforma = async (itemValue) => {
@@ -74,6 +77,11 @@ class Main extends Component {
                 if (e.plataforma == itemValue) listaLancamentoFiltrado.push(e);
             });
             this.setState({ listaLancamento: listaLancamentoFiltrado });
+
+            if (listaLancamentoFiltrado.length)
+                this.setState({ mensagemErro: '' })
+            else
+                this.setState({ mensagemErro: 'Não há titulos neste filtro.' })
         } else {
             this.setState({ plataformaSelecionada: itemValue })
             this._buscarTitulosPadrao;
@@ -84,6 +92,7 @@ class Main extends Component {
                 .catch(error => console.warn(error));
 
             this.setState({ listaLancamento: listaLancamentos });
+            this.setState({ mensagemErro: '' })
         }
     }
 
@@ -97,6 +106,12 @@ class Main extends Component {
                 if (e.categoria == itemValue) listaLancamentoFiltrado.push(e);
             });
             this.setState({ listaLancamento: listaLancamentoFiltrado });
+
+            if (listaLancamentoFiltrado.length)
+                this.setState({ mensagemErro: '' })
+            else
+                this.setState({ mensagemErro: 'Não há titulos neste filtro.' })
+
         } else {
             this.setState({ categoriaSelecionada: itemValue })
             this._buscarTitulosPadrao;
@@ -107,7 +122,29 @@ class Main extends Component {
                 .catch(error => console.warn(error));
 
             this.setState({ listaLancamento: listaLancamentos });
+            this.setState({ mensagemErro: '' })
         }
+    }
+
+    _buscarPorData = async (date) => {
+        console.warn(date, this.state.dataSelecionada);
+
+        await fetch('http://192.168.4.203:5000/api/Titulos/data/' + this.state.dataSelecionada)
+            .then(response => response.json())
+            .then(data => {
+                this.setState({ listaLancamento: data })
+                if (data.length)
+                    this.setState({ mensagemErro: '' })
+                else
+                    this.setState({ mensagemErro: 'Não há titulos neste filtro.' })
+            })
+            .catch(error => console.log(error));
+    }
+
+    _deslogar = async () => {
+        await AsyncStorage.removeItem('@opflix:token');
+        this.props.navigation.navigate("Login");
+
     }
 
     render() {
@@ -116,11 +153,13 @@ class Main extends Component {
                 ref={(ref) => { this.drawer = ref; }}
                 content={
                     <View style={styles.SideBarView}>
-                        <Text>
+                        <Text style={styles.tituloDrawer}>Escolha um filtro kkk</Text>
 
-                            Escolha um filtro kkk
-                                </Text>
-                        <Picker selectedValue={this.state.plataformaSelecionada} onValueChange={(itemValue) => this._filtrarPlataforma(itemValue)}>
+                        <TouchableOpacity style={styles.resetarBotao} onPress={() => this._buscarTitulosPadrao()}>
+                            <Text style={styles.resetarTexto}>Resetar</Text>
+                        </TouchableOpacity>
+
+                        <Picker style={styles.pickers} selectedValue={this.state.plataformaSelecionada} onValueChange={(itemValue) => this._filtrarPlataforma(itemValue)}>
                             <Picker.item label="Plataforma" value="0" />
                             {this.state.listaPlataformas.map(e => {
                                 return (<Picker.item label={e.nome} value={e.nome} />
@@ -128,40 +167,77 @@ class Main extends Component {
                             })}
                         </Picker>
 
-                        <Picker selectedValue={this.state.categoriaSelecionada} onValueChange={(itemValue) => this._filtrarCategoria(itemValue)}>
+                        <Picker style={styles.pickers} selectedValue={this.state.categoriaSelecionada} onValueChange={(itemValue) => this._filtrarCategoria(itemValue)}>
                             <Picker.item label="Categoria" value="0" />
                             {this.state.listaCategorias.map(e => {
                                 return (<Picker.item label={e.nome} value={e.nome} />
                                 )
                             })}
                         </Picker>
+
+                        <DatePicker
+                            style={styles.dataPicker}
+                            date={this.state.dataSelecionada}
+                            mode="date"
+                            showIcon="false"
+                            placeholder="Data"
+                            format="DD-MM-YYYY"
+                            minDate="08-07-1994"
+                            maxDate="01-01-2100"
+                            confirmBtnText="Confirmar"
+                            cancelBtnText="Cancelar"
+
+                            customStyles={{
+                                dateIcon: {
+                                    position: 'absolute',
+                                    left: 0,
+                                    top: 4,
+                                    marginLeft: 0
+                                },
+                                dateInput: {
+                                    marginLeft: 36
+                                }
+                            }}
+
+                            onDateChange={(date) => { this.setState({ dataSelecionada: date }); this._buscarPorData(date); }}
+                        />
+
                     </View>}
 
                 onClose={() => this.closeDrawer()}>
                 <Container>
                     <Header style={styles.headerA}>
                         <Container style={styles.header}>
-                            {/* <Text style={styles.Drawer} onPress={() => this.openDrawer()}>Filtros</Text> */}
-                            <Button
+                            <TouchableOpacity
                                 onPress={() => this.openDrawer()}
                                 transparent
                             >
-
-                            <Image
-                                source={require('../assets/img/2.png')}
-                                style={styles.botao}
-                                    />
-                            </Button>
+                                <Image
+                                    source={require('../assets/img/2.png')}
+                                    style={styles.botao}
+                                />
+                            </TouchableOpacity>
                             <Image
                                 source={require('../assets/img/kkkkkkkkkkkkkklogo.png')}
                                 style={styles.logo}
                             />
+                            <TouchableOpacity
+                                onPress={() => this._deslogar()}
+                                transparent
+                            >
+                                <Image
+                                    source={require('../assets/img/logout_icon.png')}
+                                    style={styles.botao}
+                                />
+                            </TouchableOpacity>
+
                         </Container>
                     </Header>
 
                     <View style={styles.background}>
 
                         <Text style={styles.chamadaMain}>Confira os últimos lançamentos do mundo cinematográfico!</Text>
+                        <Text style={styles.mensagemErro}>{this.state.mensagemErro}</Text>
 
                         <FlatList
                             data={this.state.listaLancamento}
@@ -189,21 +265,65 @@ class Main extends Component {
 
 
 const styles = StyleSheet.create({
+    tituloDrawer: {
+        margin: 15,
+        color: '#ffffff',
+        fontSize: 25,
+        alignSelf: 'center'
+    },
+    resetarBotao: {
+        paddingTop: 3,
+        paddingBottom: 3,
+        paddingLeft: 15,
+        paddingRight: 15,
+        alignSelf: 'center',
+        backgroundColor: '#ffffff'
+    },
+    resetarTexto: {
+
+        color: '#000000',
+        fontSize: 15,
+    },
+    pickers: {
+        backgroundColor: '#ffffffdd',
+        width: '65%',
+        alignSelf: 'center',
+        marginTop: 10
+    },
+    dataPicker: {
+        width: '65%',
+        alignSelf: 'center',
+        marginTop: 10
+        // backgroundColor : '#ffffffdd'
+    },
+    logo: {
+        marginTop: 7,
+        // marginRight: 92,
+    },
+    mensagemErro: {
+        color: 'red',
+        fontSize: 15,
+        alignSelf: 'center',
+        marginBottom: 15,
+    },
     background: {
         backgroundColor: "#F2EC91",
+        width: '100%',
+        height: '100%',
+        margin: 0,
+        padding: 0,
     },
-    botao:{
+    botao: {
         marginTop: 45,
-        width:50,
-        height:50
-    },  
+        width: 50,
+        height: 50
+    },
     headerA: {
-        width:'100%',
-        height: 100,
-        // paddingLeft: 70,
-        // marginRight: 30,
-        // marginLeft: -0,
-
+        margin: 0,
+        padding: 0,
+        backgroundColor: 'black',
+        width: '100%',
+        height: 100
     },
     header: {
         backgroundColor: "#000000",
@@ -233,11 +353,11 @@ const styles = StyleSheet.create({
     SideBarView: {
         width: '100%',
         height: '100%',
-        backgroundColor: 'white'
+        backgroundColor: '#380f6bdd',
+        color: '#ffffff'
     },
-    Drawer:{
-        color: '#7c21eb', 
-        // marginLeft: 30
+    Drawer: {
+        color: '#7c21eb',
     }
 
 });
