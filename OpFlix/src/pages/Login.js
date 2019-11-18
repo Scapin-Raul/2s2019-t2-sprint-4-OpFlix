@@ -6,6 +6,11 @@ import { StyleSheet, View, Text, TextInput, TouchableOpacity, AsyncStorage, Imag
 
 class Login extends Component {
 
+    static navigationOptions = {
+        header: null,
+    };
+
+
     constructor() {
         super();
         this.state = {
@@ -44,11 +49,14 @@ class Login extends Component {
             } catch (error) {
 
             }
-        }else{
-            this.setState({mensagemErro : "Email ou senha inválidos, tente novamente."})
+        } else {
+            this.setState({ mensagemErro: "Email ou senha inválidos, tente novamente." })
         }
     }
 
+    _redirecionarCadastro = () => {
+        this.props.navigation.navigate("Cadastro");
+    }
 
     render() {
         return (
@@ -76,6 +84,8 @@ class Login extends Component {
                     >
                         <Text>Login</Text>
                     </TouchableOpacity>
+
+                    <Text onPress={this._redirecionarCadastro}>Não tem conta? Cadastre-se agora</Text>
                 </View>
             </View>
         )
@@ -95,7 +105,7 @@ const styles = StyleSheet.create({
         alignSelf: 'center',
         marginBottom: 10,
     },
-    mensagemErro:{
+    mensagemErro: {
         color: 'red',
         fontSize: 15,
         alignSelf: 'center',
