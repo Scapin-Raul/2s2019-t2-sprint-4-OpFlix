@@ -6,6 +6,11 @@ import { Drawer, Container, Header, Content, Button } from 'native-base';
 
 
 class Main extends Component {
+    static navigationOptions = {
+        tabBarIcon: () => (<Image style={({ width: 40, height: 40, tintColor: 'white' })} source={require('../assets/img/home-icon.png')} />)
+
+    };
+
     closeDrawer = () => {
         this.drawer._root.close()
     };
@@ -16,6 +21,8 @@ class Main extends Component {
     constructor() {
         super();
         this.state = {
+            listaLancamentosCopia: [],
+            // quando clicar no resetar, o valor de listaLancamento vai receber a copia
             listaPlataformas: [],
             listaLancamento: [],
             listaCategorias: [],
@@ -62,14 +69,16 @@ class Main extends Component {
     _buscarTitulosPadrao = async () => {
         await fetch('http://192.168.4.203:5000/api/Titulos')
             .then(response => response.json())
-            .then(data => this.setState({ listaLancamento: data }))
+            .then(data => this.setState({ listaLancamentosCopia: data }))
             .catch(error => console.warn(error));
+
+        this.setState({ listaLancamento: this.state.listaLancamentosCopia })
         this.setState({ mensagemErro: '' })
     }
 
     _filtrarPlataforma = async (itemValue) => {
         if (itemValue != 0) {
-            this._buscarTitulosPadrao;
+            await this.setState({ listaLancamento: this.state.listaLancamentosCopia })
             this.setState({ plataformaSelecionada: itemValue })
 
             var listaLancamentoFiltrado = [];
@@ -84,21 +93,14 @@ class Main extends Component {
                 this.setState({ mensagemErro: 'Não há titulos neste filtro.' })
         } else {
             this.setState({ plataformaSelecionada: itemValue })
-            this._buscarTitulosPadrao;
-            let listaLancamentos = []
-            await fetch('http://192.168.4.203:5000/api/Titulos')
-                .then(response => response.json())
-                .then(data => listaLancamentos = data)
-                .catch(error => console.warn(error));
-
-            this.setState({ listaLancamento: listaLancamentos });
+            this.setState({ listaLancamento: this.state.listaLancamentosCopia })
             this.setState({ mensagemErro: '' })
         }
     }
 
     _filtrarCategoria = async (itemValue) => {
         if (itemValue != 0) {
-            this._buscarTitulosPadrao;
+            await this.setState({ listaLancamento: this.state.listaLancamentosCopia })
             this.setState({ categoriaSelecionada: itemValue })
 
             var listaLancamentoFiltrado = [];
@@ -114,14 +116,7 @@ class Main extends Component {
 
         } else {
             this.setState({ categoriaSelecionada: itemValue })
-            this._buscarTitulosPadrao;
-            let listaLancamentos = []
-            await fetch('http://192.168.4.203:5000/api/Titulos')
-                .then(response => response.json())
-                .then(data => listaLancamentos = data)
-                .catch(error => console.warn(error));
-
-            this.setState({ listaLancamento: listaLancamentos });
+            this.setState({ listaLancamento: this.state.listaLancamentosCopia })
             this.setState({ mensagemErro: '' })
         }
     }
@@ -144,8 +139,15 @@ class Main extends Component {
     _deslogar = async () => {
         await AsyncStorage.removeItem('@opflix:token');
         this.props.navigation.navigate("Login");
-
     }
+
+    _resetar = async () => {
+        this.setState({ listaLancamento: this.state.listaLancamentosCopia });
+        this.setState({ plataformaSelecionada: 0 });
+        this.setState({ categoriaSelecionada: 0 });
+        this.setState({ dataSelecionada: null });
+    }
+
 
     render() {
         return (
@@ -155,7 +157,7 @@ class Main extends Component {
                     <View style={styles.SideBarView}>
                         <Text style={styles.tituloDrawer}>Escolha um filtro kkk</Text>
 
-                        <TouchableOpacity style={styles.resetarBotao} onPress={() => this._buscarTitulosPadrao()}>
+                        <TouchableOpacity style={styles.resetarBotao} onPress={() => this._resetar()}>
                             <Text style={styles.resetarTexto}>Resetar</Text>
                         </TouchableOpacity>
 

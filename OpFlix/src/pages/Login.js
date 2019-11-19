@@ -82,10 +82,10 @@ class Login extends Component {
                         onPress={this._realizarLogin}
                     // style={styles.conteudo}
                     >
-                        <Text>Login</Text>
+                        <Text style={styles.textoBotao}>Login</Text>
                     </TouchableOpacity>
 
-                    <Text onPress={this._redirecionarCadastro}>Não tem conta? Cadastre-se agora</Text>
+                    <Text onPress={this._redirecionarCadastro} style={styles.cadastro} >Não tem conta? <Text style={styles.sublinhado}> Cadastre-se agora </Text> </Text>
                 </View>
             </View>
         )
@@ -95,6 +95,14 @@ class Login extends Component {
 
 
 const styles = StyleSheet.create({
+    cadastro:{
+        marginTop: 5,
+        fontSize: 15,
+        alignSelf: 'center',
+    },
+    sublinhado:{
+        textDecorationLine: 'underline',
+    },
     logo: {
         alignSelf: 'center',
         marginBottom: 20
@@ -127,8 +135,16 @@ const styles = StyleSheet.create({
     buttonStyle: {
         padding: 10,
         alignItems: 'center',
-        backgroundColor: '#ffffff',
+        backgroundColor: '#7c1cec',
         marginTop: 15,
+        marginBottom: 15,
+        
+    },
+    textoBotao:{
+        color: '#ffffff',
+        fontWeight: 'bold',
+        fontSize: 20,
+        
     },
     conteudo: {
         marginTop: 15,

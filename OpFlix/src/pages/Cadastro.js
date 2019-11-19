@@ -1,116 +1,6 @@
-// import React, { Component } from 'react';
-// import { StyleSheet, View, Text, AsyncStorage, Image, TextInput, TouchableOpacity, Picker } from 'react-native';
-import DatePicker from 'react-native-datepicker'
-
-// class Cadastro extends Component {
-//     static navigationOptions = {
-//         title: 'Cadastro',
-//         headerStyle: {
-//             backgroundColor: '#000000',
-//         },
-//         headerTintColor: '#ffffff',
-//         headerTitleStyle: {
-//             fontWeight: 'bold',
-//             color: '#7c21eb',
-//             alignSelf: 'center',
-//             fontSize: 25
-//         },
-//     };
-
-
-//     constructor() {
-//         super();
-//         this.state = {
-//             nome: null,
-//             email: null,
-//             senha: null,
-//             datanascimento: null,
-//             imagem: null
-//         }
-
-//     }
-
-
-
-//    
-
-//     render() {
-//         return (
-//             <View>
-
-//                 <TextInput placeholder="Nome" value={this.state.nome}
-//                     onChangeText={nome => this.setState({ nome })}
-//                 />
-//                 <TextInput placeholder="Email" value={this.state.email}
-//                     onChangeText={email => this.setState({ email })}
-//                 />
-//                 <TextInput placeholder="Senha" value={this.state.senha}
-//                     onChangeText={senha => this.setState({ senha })}
-//                 />
-
-//                 <DatePicker
-//                     date={this.state.datanascimento}
-//                     mode="date"
-//                     showIcon="false"
-//                     placeholder="Data"
-//                     format="DD-MM-YYYY"
-//                     minDate="08-07-1994"
-//                     maxDate="01-01-2100"
-//                     confirmBtnText="Confirmar"
-//                     cancelBtnText="Cancelar"
-
-//                     customStyles={{
-//                         dateIcon: {
-//                             position: 'absolute',
-//                             left: 0,
-//                             top: 4,
-//                             marginLeft: 0
-//                         },
-//                         dateInput: {
-//                             marginLeft: 36
-//                         }
-//                     }}
-
-//                     onDateChange={datanascimento => this.setState({ datanascimento })}
-//                 />
-
-//                 <Picker
-//                     // note
-//                     // mode="dropdown"
-//                     style={{ width: 120 }}
-//                     // onValueChange={this.onValueChange.bind(this)}
-//                     selectedValue={this.state.imagem}>
-//                     <Picker.item label="Imagem" value="0" />
-
-//                     <Picker.item label='aa'>
-//                         <Image source={require('../assets/img/icons/dog.png')} />
-//                     </Picker.item>
-
-//                 </Picker>
-
-//                 <TouchableOpacity onPress={() => this._cadastrar()}>
-//                     <Text>Cadastrar</Text>
-//                 </TouchableOpacity>
-
-//             </View>
-//         )
-//     }
-// }
-
-// export default Cadastro;
-
-
 import React, { Component } from 'react';
-import {
-    AppRegistry,
-    StyleSheet,
-    Text,
-    View,
-    Image,
-    TouchableOpacity,
-    TouchableHighlight,
-    ScrollView, TextInput, Picker
-} from 'react-native';
+import { AppRegistry, StyleSheet, Text, View, Image, TouchableOpacity, TouchableHighlight, ScrollView, TextInput, Picker } from 'react-native';
+import DatePicker from 'react-native-datepicker'
 
 import ModalDropdown from 'react-native-modal-dropdown';
 
@@ -151,13 +41,13 @@ class Demo extends Component {
             email: null,
             senha: null,
             datanascimento: null,
-            imagem: null
+            imagem: null,
+            mensagemErro: ''
         }
 
     }
 
-
-    _cadastrar = () => {
+    _cadastrar = async () => {
 
         let usuario = {
             nome: this.state.nome,
@@ -168,19 +58,40 @@ class Demo extends Component {
         };
 
         console.warn(usuario)
+
+        await fetch('http://192.168.4.203:5000/api/Usuarios/', {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                nome: this.state.nome,
+                email: this.state.email,
+                senha: this.state.senha,
+                datanascimento: this.state.datanascimento,
+                imagem: this.state.imagem
+            })
+        })
+            .then(resposta => resposta.status == 200 ? this.setState({mensagemErro: 'Sucesso'}) :  this.setState({mensagemErro: 'Ocorreu um erro'}))
+            .catch(erro => console.warn('AAAAA' + erro))
     }
 
     render() {
         return (
             <View style={styles.container}>
 
-                <TextInput placeholder="Nome" value={this.state.nome}
+                <Text style={styles.titulo}>Cadastre-se para ter acesso a todas as funções do nosso App! :D</Text>
+
+                <Text>{this.state.mensagemErro}</Text>
+
+                <TextInput placeholder="Nome" value={this.state.nome} style={styles.input}
                     onChangeText={nome => this.setState({ nome })}
                 />
-                <TextInput placeholder="Email" value={this.state.email}
+                <TextInput placeholder="Email" value={this.state.email} style={styles.input}
                     onChangeText={email => this.setState({ email })}
                 />
-                <TextInput placeholder="Senha" value={this.state.senha}
+                <TextInput placeholder="Senha" value={this.state.senha} style={styles.input}
                     onChangeText={senha => this.setState({ senha })}
                 />
 
@@ -195,6 +106,7 @@ class Demo extends Component {
                     confirmBtnText="Confirmar"
                     cancelBtnText="Cancelar"
 
+                    style={styles.input}
                     customStyles={{
                         dateIcon: {
                             position: 'absolute',
@@ -221,10 +133,11 @@ class Demo extends Component {
                         renderRow={this._dropdown_2_renderRow.bind(this)}
                         renderSeparator={(sectionID, rowID, adjacentRowHighlighted) => this._dropdown_2_renderSeparator(sectionID, rowID, adjacentRowHighlighted)}
                     />
+                    <Text style={{fontSize: 12.5, textAlign: 'center'}}>Icons made by Freepik</Text>
                 </View>
 
-                <TouchableOpacity onPress={() => this._cadastrar()}>
-                    <Text>Cadastrar</Text>
+                <TouchableOpacity onPress={() => this._cadastrar()} style={styles.buttonStyle}>
+                    <Text style={styles.textoBotao}>Cadastrar</Text>
                 </TouchableOpacity>
 
             </View >
@@ -235,7 +148,7 @@ class Demo extends Component {
 
     _dropdown_2_renderButtonText(rowData) {
         const { name } = rowData;
-        this.setState({ imagem: rowData })
+        this.setState({ imagem: rowData.name })
         return `${name}`;
     }
 
@@ -303,9 +216,44 @@ class Demo extends Component {
 }
 
 const styles = StyleSheet.create({
+    input: {
+        margin: 15,
+        borderRadius: 1,
+        borderWidth: 1,
+        borderColor: '#380f6b',
+        width: '75%',
+        alignSelf: 'center',
+        backgroundColor: '#ffffff'
+    },
+    titulo: {
+        fontSize: 20,
+        marginTop: 15,
+        alignSelf: 'center',
+        fontWeight: 'bold',
+        textAlign: 'center',
+    },
     container: {
+        alignContent: 'center',
+        textAlign: 'center',
+        backgroundColor: '#F2EC91',
+        height: '100%',
         flex: 1,
     },
+    buttonStyle: {
+        padding: 10,
+        alignItems: 'center',
+        backgroundColor: '#7c1cec',
+        marginTop: 15,
+        width: '75%',
+        alignSelf: 'center',
+    },
+    textoBotao: {
+        color: '#ffffff',
+        fontWeight: 'bold',
+        fontSize: 20,
+    },
+
+
     dropdown_2: {
         alignSelf: 'flex-end',
         width: 200,
@@ -313,7 +261,8 @@ const styles = StyleSheet.create({
         right: 8,
         borderWidth: 0,
         borderRadius: 3,
-        backgroundColor: 'cornflowerblue',
+        backgroundColor: '#7c1cec',
+        alignSelf: 'center'
     },
     dropdown_2_text: {
         marginVertical: 10,

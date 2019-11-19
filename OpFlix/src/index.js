@@ -21,9 +21,9 @@ const MainNavigator = createBottomTabNavigator({
     initialRouteName: 'Main',
     tabBarOptions: {
       showIcon: true,
-      showLabel: true,
-      inactiveBackgroundColor: '#eeeeee',
-      activeBackgroundColor: '#dddddd',
+      showLabel: false,
+      inactiveBackgroundColor: '#7c1cec',
+      activeBackgroundColor: '#380F6B',
     }
 
   }
