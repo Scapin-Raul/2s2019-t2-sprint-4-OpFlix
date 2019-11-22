@@ -1,15 +1,12 @@
 import React, { Component } from 'react';
-import { StyleSheet, View, Text, AsyncStorage, Image, } from 'react-native';
+import { StyleSheet, View, Text, AsyncStorage, Image, TouchableOpacity } from 'react-native';
 import { Drawer, Container, Header, Content, Button } from 'native-base';
-
-
 import jwt from 'jwt-decode'
 
 class Profile extends Component {
 
   static navigationOptions = {
-    tabBarIcon: () => (<Image style={({width: 40, height: 40, tintColor: 'white'})} source={require('../assets/img/user-icon.png')} />)
-  
+    tabBarIcon: () => (<Image style={({ width: 40, height: 40, tintColor: 'white' })} source={require('../assets/img/user-icon.png')} />)
   };
 
 
@@ -125,6 +122,10 @@ class Profile extends Component {
   }
 
 
+  _deslogar = async () => {
+    await AsyncStorage.removeItem('@opflix:token');
+    this.props.navigation.navigate("Login");
+  }
 
 
   render() {
@@ -132,10 +133,22 @@ class Profile extends Component {
       <View style={styles.content}>
 
         <Header style={styles.headerA}>
+
+          <TouchableOpacity style={{ width: 50, height: 50 }} transparent></TouchableOpacity>
+
           <Image
             source={require('../assets/img/kkkkkkkkkkkkkklogo.png')}
             style={styles.logo}
           />
+          <TouchableOpacity
+            onPress={() => this._deslogar()}
+            transparent
+          >
+            <Image
+              source={require('../assets/img/logout_icon.png')}
+              style={styles.botao}
+            />
+          </TouchableOpacity>
         </Header>
         <Text style={styles.titulo}>{this.state.nomeUser}</Text>
         <Image style={styles.imagem} source={this._renderizarImagem()} />
@@ -148,13 +161,20 @@ class Profile extends Component {
 }
 
 const styles = StyleSheet.create({
+  botao: {
+
+    marginTop: 45,
+
+    width: 50,
+    height: 50
+  },
+
   content: {
     alignContent: 'center',
     textAlign: 'center',
     backgroundColor: '#F2EC91',
     height: '100%'
   },
-
   titulo: {
     fontSize: 35,
     marginTop: 15,
@@ -188,6 +208,7 @@ const styles = StyleSheet.create({
     margin: 0,
     padding: 0,
     backgroundColor: 'black',
+    justifyContent: 'space-between',
     width: '100%',
     height: 100
   },

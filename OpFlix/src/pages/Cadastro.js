@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
-import { AppRegistry, StyleSheet, Text, View, Image, TouchableOpacity, TouchableHighlight, ScrollView, TextInput, Picker } from 'react-native';
+import { AppRegistry, StyleSheet, Text, View, Image, TouchableOpacity, Animated, Keyboard, TouchableHighlight, TextInput, Switch } from 'react-native';
 import DatePicker from 'react-native-datepicker'
-
 import ModalDropdown from 'react-native-modal-dropdown';
 
 const DEMO_OPTIONS_1 = ['option 1', 'option 2', 'option 3', 'option 4', 'option 5', 'option 6', 'option 7', 'option 8'];
@@ -32,9 +31,9 @@ class Demo extends Component {
         },
     };
 
-
     constructor(props) {
         super(props);
+        this.toggleSwitch = this.toggleSwitch.bind(this);
 
         this.state = {
             nome: null,
@@ -42,9 +41,45 @@ class Demo extends Component {
             senha: null,
             datanascimento: null,
             imagem: null,
-            mensagemErro: ''
+            mensagemErro: '',
+            showPassword: true,
         }
 
+        // this.keyboardHeight = new Animated.Value(0);
+    }
+
+
+    // componentWillMount() {
+    //     this.keyboardWillShowSub = Keyboard.addListener('keyboardDidShow', this.keyboardDidShow);
+    //     this.keyboardWillHideSub = Keyboard.addListener('keyboardDidHide', this.keyboardDidHide);
+    // }
+
+    // componentWillUnmount() {
+    //     this.keyboardWillShowSub.remove();
+    //     this.keyboardWillHideSub.remove();
+    // }
+
+    // keyboardDidShow = (event) => {
+    //     Animated.parallel([
+    //         Animated.timing(this.keyboardHeight, {
+    //             duration: event.duration,
+    //             toValue: event.endCoordinates.height,
+    //         }),
+    //     ]).start();
+    // };
+
+    // keyboardDidHide = (event) => {
+    //     Animated.parallel([
+    //         Animated.timing(this.keyboardHeight, {
+    //             duration: event.duration,
+    //             toValue: 0,
+    //         }),
+    //     ]).start();
+    // };
+
+
+    toggleSwitch() {
+        this.setState({ showPassword: !this.state.showPassword });
     }
 
     _cadastrar = async () => {
@@ -73,77 +108,160 @@ class Demo extends Component {
                 imagem: this.state.imagem
             })
         })
-            .then(resposta => resposta.status == 200 ? this.setState({mensagemErro: 'Sucesso'}) :  this.setState({mensagemErro: 'Ocorreu um erro'}))
+            .then(resposta => {
+                if (resposta.status == 200) {
+                    // this.setState({ mensagemErro: 'Sucesso' });
+                    this.props.navigation.navigate("Login");
+
+                }
+                else {
+                    this.setState({ mensagemErro: 'Ocorreu um erro' })
+
+                }
+
+            })
             .catch(erro => console.warn('AAAAA' + erro))
     }
+
+    _renderizarImagem = () => {
+        let icon = "";
+
+        switch (this.state.imagem) {
+            case 'Dog':
+                icon = require('../assets/img/icons/dog.png')
+                console.warn(icon, 'dog');
+                break;
+
+            case 'Cat':
+                icon = require('../assets/img/icons/cat.png')
+                console.warn(icon, 'cat');
+                break;
+
+            case 'Cow':
+                icon = require('../assets/img/icons/cow.png')
+                console.warn(icon, 'cow');
+                break;
+
+            case 'Fish':
+                icon = require('../assets/img/icons/fish.png')
+                console.warn(icon, 'fish');
+                break;
+
+            case 'Fox':
+                icon = require('../assets/img/icons/fox.png')
+                console.warn(icon, 'fox');
+                break;
+
+            case 'Lion':
+                icon = require('../assets/img/icons/lion.png')
+                console.warn(icon, 'lion');
+                break;
+
+            case 'Panda':
+                icon = require('../assets/img/icons/panda.png')
+                console.warn(icon, 'panda');
+                break;
+
+            case 'Wolf':
+                icon = require('../assets/img/icons/wolf.png')
+                console.warn(icon, 'wolf');
+                break;
+
+            default:
+                icon = require('../assets/img/user-icon.png')
+                console.warn(icon, 'default');
+                break;
+        }
+
+        console.warn(icon);
+        return icon;
+    }
+
 
     render() {
         return (
             <View style={styles.container}>
 
+
                 <Text style={styles.titulo}>Cadastre-se para ter acesso a todas as funções do nosso App! :D</Text>
 
-                <Text>{this.state.mensagemErro}</Text>
+                <Text style={styles.mensagemErro}>{this.state.mensagemErro}</Text>
 
-                <TextInput placeholder="Nome" value={this.state.nome} style={styles.input}
-                    onChangeText={nome => this.setState({ nome })}
-                />
-                <TextInput placeholder="Email" value={this.state.email} style={styles.input}
-                    onChangeText={email => this.setState({ email })}
-                />
-                <TextInput placeholder="Senha" value={this.state.senha} style={styles.input}
-                    onChangeText={senha => this.setState({ senha })}
-                />
+                <Image style={styles.imagem} source={this._renderizarImagem()} />
 
-                <DatePicker
-                    date={this.state.datanascimento}
-                    mode="date"
-                    showIcon="false"
-                    placeholder="Data"
-                    format="DD-MM-YYYY"
-                    minDate="08-07-1994"
-                    maxDate="01-01-2100"
-                    confirmBtnText="Confirmar"
-                    cancelBtnText="Cancelar"
 
-                    style={styles.input}
-                    customStyles={{
-                        dateIcon: {
-                            position: 'absolute',
-                            left: 0,
-                            top: 4,
-                            marginLeft: 0
-                        },
-                        dateInput: {
-                            marginLeft: 36
-                        }
-                    }}
+                {/* <Animated.View style={[styles.container, { paddingBottom: this.keyboardHeight }]}> */}
 
-                    onDateChange={datanascimento => this.setState({ datanascimento })}
-                />
 
-                <View>
-                    <ModalDropdown ref="dropdown_2"
-                        style={styles.dropdown_2}
-                        textStyle={styles.dropdown_2_text}
-                        dropdownStyle={styles.dropdown_2_dropdown}
-                        defaultValue='Selecione um icone'
-                        options={DEMO_OPTIONS_2}
-                        renderButtonText={(rowData) => this._dropdown_2_renderButtonText(rowData)}
-                        renderRow={this._dropdown_2_renderRow.bind(this)}
-                        renderSeparator={(sectionID, rowID, adjacentRowHighlighted) => this._dropdown_2_renderSeparator(sectionID, rowID, adjacentRowHighlighted)}
+                    <TextInput placeholder="Nome" value={this.state.nome} style={styles.input}
+                        onChangeText={nome => this.setState({ nome })}
                     />
-                    <Text style={{fontSize: 12.5, textAlign: 'center'}}>Icons made by Freepik</Text>
-                </View>
+                    <TextInput placeholder="Email" value={this.state.email} style={styles.input}
+                        onChangeText={email => this.setState({ email })}
+                    />
+                    <View>
+                        <TextInput placeholder="Senha" value={this.state.senha} style={styles.input}
+                            password={true}
+                            secureTextEntry={true}
+                            onChangeText={senha => this.setState({ senha })}
+                            secureTextEntry={this.state.showPassword}
+                        />
+                        <Switch
+                            style={styles.switch}
+                            onValueChange={this.toggleSwitch}
+                            value={!this.state.showPassword}
+                        />
+                    </View>
 
-                <TouchableOpacity onPress={() => this._cadastrar()} style={styles.buttonStyle}>
-                    <Text style={styles.textoBotao}>Cadastrar</Text>
-                </TouchableOpacity>
+                    <DatePicker
+                        date={this.state.datanascimento}
+                        mode="date"
+                        showIcon="false"
+                        placeholder="Data"
+                        format="DD-MM-YYYY"
+                        minDate="08-07-1994"
+                        maxDate="01-01-2100"
+                        confirmBtnText="Confirmar"
+                        cancelBtnText="Cancelar"
+
+                        style={styles.input}
+                        customStyles={{
+                            dateIcon: {
+                                position: 'absolute',
+                                left: 0,
+                                top: 4,
+                                marginLeft: 0
+                            },
+                            dateInput: {
+                                marginLeft: 36
+                            }
+                        }}
+
+                        onDateChange={datanascimento => this.setState({ datanascimento })}
+                    />
+
+                    <View>
+                        <ModalDropdown ref="dropdown_2"
+                            style={styles.dropdown_2}
+                            textStyle={styles.dropdown_2_text}
+                            dropdownStyle={styles.dropdown_2_dropdown}
+                            defaultValue='Selecione um icone'
+                            options={DEMO_OPTIONS_2}
+                            renderButtonText={(rowData) => this._dropdown_2_renderButtonText(rowData)}
+                            renderRow={this._dropdown_2_renderRow.bind(this)}
+                            renderSeparator={(sectionID, rowID, adjacentRowHighlighted) => this._dropdown_2_renderSeparator(sectionID, rowID, adjacentRowHighlighted)}
+                        />
+                        <Text style={{ fontSize: 12.5, textAlign: 'center' }}>Icons made by Freepik</Text>
+                    </View>
+
+                    <TouchableOpacity onPress={() => this._cadastrar()} style={styles.buttonStyle}>
+                        <Text style={styles.textoBotao}>Cadastrar</Text>
+                    </TouchableOpacity>
+                {/* </Animated.View> */}
 
             </View >
         );
     }
-
 
 
     _dropdown_2_renderButtonText(rowData) {
@@ -216,8 +334,21 @@ class Demo extends Component {
 }
 
 const styles = StyleSheet.create({
+    mensagemErro: {
+        color: 'red',
+        fontSize: 15,
+        alignSelf: 'center',
+        marginBottom: 3,
+        marginTop: 2,
+    },
+    switch: {
+        position: 'absolute',
+        top: '27.5%',
+        left: '75%'
+    },
     input: {
-        margin: 15,
+        margin: 7.5,
+        height: 50,
         borderRadius: 1,
         borderWidth: 1,
         borderColor: '#380f6b',
@@ -252,12 +383,22 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         fontSize: 20,
     },
+    imagem: {
+        width: 100,
+        height: 100,
+        alignSelf: 'center',
+        // marginTop: 5,
+        // marginBottom: 5,
+        backgroundColor: '#ebe821',
 
+        borderRadius: 5,
+        borderWidth: 3,
+        borderColor: '#380f6b',
+    },
 
     dropdown_2: {
         alignSelf: 'flex-end',
         width: 200,
-        // marginTop: 32,
         right: 8,
         borderWidth: 0,
         borderRadius: 3,

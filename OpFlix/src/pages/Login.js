@@ -1,8 +1,5 @@
 import React, { Component } from 'react';
-import { StyleSheet, View, Text, TextInput, TouchableOpacity, AsyncStorage, Image } from 'react-native';
-
-
-
+import { StyleSheet, View, Text, TextInput, TouchableOpacity, AsyncStorage, Image, Switch } from 'react-native';
 
 class Login extends Component {
 
@@ -11,15 +8,21 @@ class Login extends Component {
     };
 
 
-    constructor() {
-        super();
+    constructor(props) {
+        super(props);
+        this.toggleSwitch = this.toggleSwitch.bind(this);
         this.state = {
             email: 'ra@gmail.com',
             senha: '123456',
             // email: '',
             // senha: '',
-            mensagemErro: ''
+            mensagemErro: '',
+            showPassword: true,
         }
+    }
+
+    toggleSwitch() {
+        this.setState({ showPassword: !this.state.showPassword });
     }
 
     _realizarLogin = async () => {
@@ -73,10 +76,19 @@ class Login extends Component {
                         style={styles.conteudo}
                     />
 
-                    <TextInput placeholder="Senha"
-                        onChangeText={senha => this.setState({ senha })}
-                        style={styles.conteudo}
-                    />
+                    <View>
+                        <TextInput placeholder="Senha"
+                            onChangeText={senha => this.setState({ senha })}
+                            style={styles.conteudo}
+                            password={true}
+                            secureTextEntry={this.state.showPassword}
+                        />
+                        <Switch
+                            style={styles.switch}
+                            onValueChange={this.toggleSwitch}
+                            value={!this.state.showPassword}
+                        />
+                    </View>
 
                     <TouchableOpacity style={styles.buttonStyle}
                         onPress={this._realizarLogin}
@@ -95,15 +107,21 @@ class Login extends Component {
 
 
 const styles = StyleSheet.create({
-    cadastro:{
+    switch: {
+        position: 'absolute',
+        bottom: 10,
+        left: '85%'
+    },
+    cadastro: {
         marginTop: 5,
         fontSize: 15,
         alignSelf: 'center',
     },
-    sublinhado:{
+    sublinhado: {
         textDecorationLine: 'underline',
     },
     logo: {
+        marginTop: 7,
         alignSelf: 'center',
         marginBottom: 20
     },
@@ -138,13 +156,13 @@ const styles = StyleSheet.create({
         backgroundColor: '#7c1cec',
         marginTop: 15,
         marginBottom: 15,
-        
+
     },
-    textoBotao:{
+    textoBotao: {
         color: '#ffffff',
         fontWeight: 'bold',
         fontSize: 20,
-        
+
     },
     conteudo: {
         marginTop: 15,

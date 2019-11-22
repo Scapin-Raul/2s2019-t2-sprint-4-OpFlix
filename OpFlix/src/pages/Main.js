@@ -4,11 +4,9 @@ import { FlatList } from 'react-native-gesture-handler';
 import DatePicker from 'react-native-datepicker'
 import { Drawer, Container, Header, Content, Button } from 'native-base';
 
-
 class Main extends Component {
     static navigationOptions = {
         tabBarIcon: () => (<Image style={({ width: 40, height: 40, tintColor: 'white' })} source={require('../assets/img/home-icon.png')} />)
-
     };
 
     closeDrawer = () => {
