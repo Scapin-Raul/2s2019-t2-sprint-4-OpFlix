@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { StyleSheet, View, Text, Image, Picker, AsyncStorage, TouchableOpacity } from 'react-native';
+import { StyleSheet, View, Text, Image, Picker, AsyncStorage, ScrollView, TouchableOpacity } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
 import DatePicker from 'react-native-datepicker'
 import { Drawer, Container, Header, Content, Button } from 'native-base';
@@ -234,7 +234,7 @@ class Main extends Component {
                         </Container>
                     </Header>
 
-                    <View style={styles.background}>
+                    <ScrollView style={styles.background}>
 
                         <Text style={styles.chamadaMain}>Confira os últimos lançamentos do mundo cinematográfico!</Text>
                         <Text style={styles.mensagemErro}>{this.state.mensagemErro}</Text>
@@ -256,7 +256,7 @@ class Main extends Component {
                             )}
                         />
 
-                    </View>
+                    </ScrollView>
                 </Container>
             </Drawer>
         );

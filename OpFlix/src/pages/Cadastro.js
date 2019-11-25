@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { AppRegistry, StyleSheet, Text, View, Image, TouchableOpacity, Animated, Keyboard, TouchableHighlight, TextInput, Switch } from 'react-native';
+import { AppRegistry, StyleSheet, Text, View, Image, TouchableOpacity, TouchableHighlight, TextInput, Switch, KeyboardAvoidingView, ScrollView } from 'react-native';
 import DatePicker from 'react-native-datepicker'
 import ModalDropdown from 'react-native-modal-dropdown';
 
@@ -45,37 +45,7 @@ class Demo extends Component {
             showPassword: true,
         }
 
-        // this.keyboardHeight = new Animated.Value(0);
     }
-
-
-    // componentWillMount() {
-    //     this.keyboardWillShowSub = Keyboard.addListener('keyboardDidShow', this.keyboardDidShow);
-    //     this.keyboardWillHideSub = Keyboard.addListener('keyboardDidHide', this.keyboardDidHide);
-    // }
-
-    // componentWillUnmount() {
-    //     this.keyboardWillShowSub.remove();
-    //     this.keyboardWillHideSub.remove();
-    // }
-
-    // keyboardDidShow = (event) => {
-    //     Animated.parallel([
-    //         Animated.timing(this.keyboardHeight, {
-    //             duration: event.duration,
-    //             toValue: event.endCoordinates.height,
-    //         }),
-    //     ]).start();
-    // };
-
-    // keyboardDidHide = (event) => {
-    //     Animated.parallel([
-    //         Animated.timing(this.keyboardHeight, {
-    //             duration: event.duration,
-    //             toValue: 0,
-    //         }),
-    //     ]).start();
-    // };
 
 
     toggleSwitch() {
@@ -180,18 +150,17 @@ class Demo extends Component {
 
     render() {
         return (
-            <View style={styles.container}>
+            <KeyboardAvoidingView style={styles.container}
+            behavior={Platform.OS === "ios" ? "padding" : null}
+            keyboardVerticalOffset={Platform.OS === "ios" ? 64 : 0}
+                >
 
+                <ScrollView>
+                    <Text style={styles.titulo}>Cadastre-se para ter acesso a todas as funções do nosso App! :D</Text>
 
-                <Text style={styles.titulo}>Cadastre-se para ter acesso a todas as funções do nosso App! :D</Text>
+                    <Text style={styles.mensagemErro}>{this.state.mensagemErro}</Text>
 
-                <Text style={styles.mensagemErro}>{this.state.mensagemErro}</Text>
-
-                <Image style={styles.imagem} source={this._renderizarImagem()} />
-
-
-                {/* <Animated.View style={[styles.container, { paddingBottom: this.keyboardHeight }]}> */}
-
+                    <Image style={styles.imagem} source={this._renderizarImagem()} />
 
                     <TextInput placeholder="Nome" value={this.state.nome} style={styles.input}
                         onChangeText={nome => this.setState({ nome })}
@@ -257,9 +226,10 @@ class Demo extends Component {
                     <TouchableOpacity onPress={() => this._cadastrar()} style={styles.buttonStyle}>
                         <Text style={styles.textoBotao}>Cadastrar</Text>
                     </TouchableOpacity>
-                {/* </Animated.View> */}
 
-            </View >
+                </ScrollView>
+
+            </KeyboardAvoidingView>
         );
     }
 
