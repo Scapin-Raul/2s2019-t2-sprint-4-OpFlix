@@ -21,6 +21,16 @@ class Login extends Component {
         }
     }
 
+    componentWillMount(){
+        this._verificacao();
+    }
+    
+    _verificacao = async() => {
+        if(await AsyncStorage.getItem('@opflix:token') != null){
+            this.props.navigation.navigate("Main");
+        }
+    }
+
     toggleSwitch() {
         this.setState({ showPassword: !this.state.showPassword });
     }
