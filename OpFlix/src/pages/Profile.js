@@ -40,7 +40,7 @@ class Profile extends Component {
 
         // console.warn(this.state.token, this.state.idUser,this.state.emailUser)
 
-        await fetch('http://192.168.4.203:5000/api/Usuarios/Buscar', {
+        await fetch('http://192.168.4.93:5000/api/Usuarios/Buscar', {
           method: 'GET',
           headers: {
             'Accept': 'application/json',

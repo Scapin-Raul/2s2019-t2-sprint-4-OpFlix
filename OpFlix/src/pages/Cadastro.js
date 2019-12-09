@@ -64,7 +64,7 @@ class Demo extends Component {
 
         console.warn(usuario)
 
-        await fetch('http://192.168.4.203:5000/api/Usuarios/', {
+        await fetch('http://192.168.4.93:5000/api/Usuarios/', {
             method: 'POST',
             headers: {
                 'Accept': 'application/json',

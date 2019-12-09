@@ -37,7 +37,7 @@ class Login extends Component {
 
     _realizarLogin = async () => {
         // console.warn(this.state.email + ' - ' + this.state.senha)
-        await fetch('http://192.168.4.203:5000/api/login', {
+        await fetch('http://192.168.4.93:5000/api/login', {
             method: 'POST',
             headers: {
                 'Accept': 'application/json',

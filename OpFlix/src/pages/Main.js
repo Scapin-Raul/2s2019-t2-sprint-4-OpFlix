@@ -38,7 +38,7 @@ class Main extends Component {
     }
 
     _buscarCategorias = async () => {
-        await fetch('http://192.168.4.203:5000/api/Categorias/', {
+        await fetch('http://192.168.4.93:5000/api/Categorias/', {
             method: 'GET',
             headers: {
                 'Accept': 'application/json',
@@ -52,7 +52,7 @@ class Main extends Component {
     }
 
     _buscarPlataformas = async () => {
-        await fetch('http://192.168.4.203:5000/api/Plataformas')
+        await fetch('http://192.168.4.93:5000/api/Plataformas')
             .then(response => response.json())
             .then(data => this.setState({ listaPlataformas: data }))
             .catch(error => console.warn(error));
@@ -65,7 +65,7 @@ class Main extends Component {
     }
 
     _buscarTitulosPadrao = async () => {
-        await fetch('http://192.168.4.203:5000/api/Titulos')
+        await fetch('http://192.168.4.93:5000/api/Titulos')
             .then(response => response.json())
             .then(data => this.setState({ listaLancamentosCopia: data }))
             .catch(error => console.warn(error));
@@ -122,7 +122,7 @@ class Main extends Component {
     _buscarPorData = async (date) => {
         console.warn(date, this.state.dataSelecionada);
 
-        await fetch('http://192.168.4.203:5000/api/Titulos/data/' + this.state.dataSelecionada)
+        await fetch('http://192.168.4.93:5000/api/Titulos/data/' + this.state.dataSelecionada)
             .then(response => response.json())
             .then(data => {
                 this.setState({ listaLancamento: data })
